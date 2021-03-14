@@ -1,0 +1,22 @@
+create table address (id integer not null  AUTO_INCREMENT, city varchar(255), house_number integer not null, street varchar(255), zip_code integer not null, person_id integer, primary key (id))  engine=InnoDB;
+create table categorization (uid bigint not null  AUTO_INCREMENT, date_created timestamp not null, last_updated timestamp not null, primary key (uid))  engine=InnoDB;
+create table category (uid bigint not null  AUTO_INCREMENT, date_created timestamp not null, last_updated timestamp not null, frequency float, id varchar(255), label varchar(255), namespace varchar(255), score integer not null, winner boolean, categorization_uid bigint, primary key (uid))  engine=InnoDB;
+create table document (uid bigint not null  AUTO_INCREMENT, date_created timestamp not null, last_updated timestamp not null, content_type varchar(50), filepath varchar(4096) not null, name varchar(255) not null, size bigint, categorization_uid bigint, primary key (uid))  engine=InnoDB;
+create table full_analisys_entity (uid bigint not null  AUTO_INCREMENT, date_created timestamp not null, last_updated timestamp not null, primary key (uid))  engine=InnoDB;
+create table person (id integer not null  AUTO_INCREMENT, name varchar(255), primary key (id))  engine=InnoDB;
+alter table document add constraint UK_b5s943bp2fwbl7c92wop6pjxr unique (filepath);
+alter table document add constraint UK_36vs45u76s1n950kwxfa5lyhc unique (name);
+alter table address add constraint FK81ihijcn1kdfwffke0c0sjqeb foreign key (person_id) references person;
+alter table category add constraint FKnclpl0djglc4vthlodltvtlf5 foreign key (categorization_uid) references categorization;
+alter table document add constraint FKd4xkyecb0a5g8o8rves2ul4qd foreign key (categorization_uid) references categorization;
+
+
+
+ADD INDEX `fk_categorization_document_idx` (`document_uid` ASC) VISIBLE;
+ALTER TABLE `ai`.`categorization` 
+ADD CONSTRAINT `fk_categorization_document`
+  FOREIGN KEY (`document_uid`)
+  REFERENCES `ai`.`document` (`uid`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  

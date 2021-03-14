@@ -1,0 +1,116 @@
+
+<zk xmlns:n="native">
+<style>
+	.json_object { margin:10px; padding-left:10px; border-left:1px solid #ccc}
+	.json_key { font-weight: bold; }
+</style>
+	<window title="@load(vm.title)" viewModel="@id('vm') @init('ai.expert.assessment.ui.viewmodel.DocumentVM')">
+	<vlayout>
+		<a label="Back to list" onClick="@command('gotoDocuments')"/>
+			<if test="@load(vm.messageError)">
+				<label value="@load(vm.messageError)"/>
+			</if>
+			<if test="@load(vm.document)">
+					<panel height="300px" hflex="1" style="margin-bottom:10px"
+					     title="@load(vm.document.name)" border="normal" maximizable="true" sizable="true"
+					     collapsible="true">
+					     <panelchildren style="overflow:auto">
+					     <label value="@load(vm.documentContent)" pre="true"/>
+					     </panelchildren>
+					</panel>
+					<button label="Categorize" onClick="@command('categorize')"/>
+					<if test="@load(vm.categorization)">
+						<hlayout>
+							<div hflex="1">
+								<grid model="@load(vm.categories)" height="360px">
+								    <columns menupopup="auto">
+								        <column label="Label" sort="auto(label)" />
+								        <column label="Score" sort="auto(score)" />
+								        <column label="Frequency" sort="auto(frequency)" />
+								        <column label="Hierarchy" />
+								    </columns>
+										<template name="model">
+											<row>
+												<label value="@load(each.label)"/>
+												<label value="@load(each.score)"/>
+												<label value="@load(each.frequency)"/>
+												<label value="@load(each.hierarchy)"/>
+											</row>
+										</template>
+								</grid>
+							</div>
+	
+							<panel height="360px" hflex="1" style="margin-bottom:10px"
+								     title="Categorization Json" border="normal" maximizable="true" sizable="true"
+								     collapsible="true">
+								     <panelchildren style="overflow:auto">
+								     	<html>${vm.formattedCategorizationJson}</html>
+								     </panelchildren>
+							</panel>
+						</hlayout>
+					</if>
+					<button label="Analyze" onClick="@command('analyze')"/>
+					<if test="@load(vm.analysisResult)">
+						<listbox model="@load(vm.analysisResult)">
+						    <listhead >
+					            <listheader label="Analysis Type" />
+					            <listheader label="Successfully processed" />
+					            <listheader label="See json" />
+					        </listhead>
+							<template name="model">
+								<listitem>
+									<listcell label="@load(each.analysisType)"/>
+									<listcell label="@load(each.success)"/>
+									<listcell>
+										 <window id="popup_${each.analysisType}">
+            								<panel height="360px" hflex="1" style="margin-bottom:10px"
+							     					title="Categorization Json" border="normal" maximizable="true" sizable="true" open="false"
+							     					collapsible="true">
+							     				<panelchildren style="overflow:auto">
+							     					<html>${vm.getFormattedAnalysisJson(each.analysisType)}</html>
+							     				</panelchildren>
+											</panel>
+        								</window>
+									</listcell>
+								</listitem>
+							</template>
+						</listbox>
+					</if>
+					<if test="@load(empty vm.analysisResult and not empty vm.analysisJsonMap)">
+						<listbox model="@load(vm.analysisJsonMap)">
+						    <listhead >
+					            <listheader label="Analysis Type" />
+					            <listheader label="See json" />
+					        </listhead>
+							<template name="model">
+								<listitem>
+									<listcell label="@load(each.key)"/>
+									<listcell>
+										 <window id="popup_${each.key}">
+            								<panel height="360px" hflex="1" style="margin-bottom:10px"
+							     					title="Json response" border="normal" maximizable="true" sizable="true" open="false"
+							     					collapsible="true">
+							     				<panelchildren style="overflow:auto">
+							     					<html>${vm.getFormattedAnalysisJson(each.key)}</html>
+							     				</panelchildren>
+											</panel>
+        								</window>
+									</listcell>
+								</listitem>
+							</template>
+						</listbox>
+					</if>
+		<!--
+				<div children="@load(vm.analysisJsonList)">
+					<template name="children">
+						<vlayout>
+							<n:h1>OUTPUT</n:h1>
+							<label value="@load(each)"  pre="true"/>
+						</vlayout>
+					</template>
+				</div>
+-->
+			</if>
+	</vlayout>
+	</window>
+</zk>

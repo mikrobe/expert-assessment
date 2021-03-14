@@ -1,0 +1,209 @@
+<div class="container">
+
+    <h3>{{message}}</h3>
+
+
+    <div *ngIf="document">
+        <div class="row">
+            <div class="col-sm">
+                <div class="page-header">
+                    <h1>{{ document.name }}</h1>
+                </div>
+
+                <p style="height:400px; overflow:auto">
+                    {{content}}
+                </p>
+                <button class="btn btn-outline-primary" style="margin: 10px" (click)="categorize()">
+                    Categorize
+                </button>
+                
+                <button class="btn btn-outline-primary" style="margin: 10px" (click)="analyze()">
+                    Analyze
+                </button>
+            </div>
+            <div class="col-sm">
+
+                <!--       
+    <div class="card mt-3">
+        <div class="card-header">List of Categorizations</div>
+        <ul
+          class="list-group list-group-flush"
+          *ngFor="let c of categorizations">
+          <li class="list-group-item">
+                <ul class="list-group list-group-flush"
+                        *ngFor="let cat of c.categories">
+                    <li class="list-group-item">{{ cat.label }}</li>
+                    <li class="list-group-item">{{ cat.hierarchy }}</li>
+                    <li class="list-group-item">{{ cat.score }}</li>
+                    <li class="list-group-item">{{ cat.frequency }}</li>
+                </ul>
+          </li>
+        </ul>
+    </div> 
+-->
+                <div class="card my-5">
+                    <div class="card-body" *ngFor="let c of categorizations">
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Hierarchy</th>
+                                    <th scope="col">Score</th>
+                                    <th scope="col">Frequency</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let cat of c.categories">
+                                    <td>{{ cat.label }}</td>
+                                    <td>{{ cat.hierarchy }}</td>
+                                    <td style="text-align: right;">{{ cat.score | number}}</td>
+                                    <td style="text-align: right;">{{ cat.frequency | number}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="card my-5">
+                    <h2>Full Analysis</h2>
+                    <ul ngbNav activeId="0" #nav="ngbNav" class="nav-tabs">
+                        <li ngbNavItem="{{i}}" *ngFor="let f of fullAnalysis; let i = index">
+                            <a ngbNavLink>{{f.type | uppercase}}</a>
+                            <ng-template ngbNavContent>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            <h3>Main Lemmas</h3>
+                                            <table class="table table-bordered table-striped">
+                                                <thead class="thead-dark">
+                                                    <tr>
+                                                        <th scope="col">Lemma</th>
+                                                        <th scope="col">Score</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let each of f.analyzeResponse.data.mainLemmas">
+                                                        <td>{{ each.value }}</td>
+                                                        <td style="text-align: right;">{{ each.score | number}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-sm">
+                                            <h3>Main Sentences</h3>
+                                            <table class="table table-bordered table-striped">
+                                                <thead class="thead-dark">
+                                                    <tr>
+                                                        <th scope="col">Sentence</th>
+                                                        <th scope="col">Score</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let each of f.analyzeResponse.data.mainSentences">
+                                                        <td>{{ each.value }}</td>
+                                                        <td style="text-align: right;">{{ each.score | number}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-sm">
+                                            <h3>Main Phrases</h3>
+                                            <table class="table table-bordered table-striped">
+                                                <thead class="thead-dark">
+                                                    <tr>
+                                                        <th scope="col">Phrases</th>
+                                                        <th scope="col">Score</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let each of f.analyzeResponse.data.mainPhrases">
+                                                        <td>{{ each.value }}</td>
+                                                        <td style="text-align: right;">{{ each.score | number}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-sm">
+                                            <h3>Main Syncons</h3>
+                                            <table class="table table-bordered table-striped">
+                                                <thead class="thead-dark">
+                                                    <tr>
+                                                        <th scope="col">Syncons</th>
+                                                        <th scope="col">Lemma</th>
+                                                        <th scope="col">Score</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let each of f.analyzeResponse.data.mainSyncons">
+                                                        <td style="text-align: right;">{{ each.syncon | number}}</td>
+                                                        <td>{{ each.lemma }}</td>
+                                                        <td style="text-align: right;">{{ each.score | number}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-sm">
+                                            <h3>Knowledge</h3>
+                                            <table class="table table-bordered table-striped">
+                                                <thead class="thead-dark">
+                                                    <tr>
+                                                        <th scope="col">Knowledge</th>
+                                                        <th scope="col">Score</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let each of f.analyzeResponse.data.knowledge">
+                                                        <td>{{ each.label }}</td>
+                                                        <td style="text-align: right;">{{ each.syncon | number}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-sm">
+                                            <h3>Entities</h3>
+                                            <table class="table table-bordered table-striped">
+                                                <thead class="thead-dark">
+                                                    <tr>
+                                                        <th scope="col">Syncons</th>
+                                                        <th scope="col">Lemma</th>
+                                                        <th scope="col">Type</th>
+                                                        <th scope="col">Relevance</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let each of f.analyzeResponse.data.entities">
+                                                        <td style="text-align: right;">{{ each.syncon | number}}</td>
+                                                        <td>{{ each.lemma }}</td>
+                                                        <td>{{ each.type }}</td>
+                                                        <td style="text-align: right;">{{ each.relevance | number}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </li>
+                    </ul>
+                    <div [ngbNavOutlet]="nav"></div>
+                </div>
+
+                <p>
+                    <!--
+        <span>Area: </span>{{country.area | number}} km
+        <sup>2</sup>
+      </p>
+      <p>
+        <span>Population: </span>{{country.population | number}}</p>
+      <p>
+        <span>GDP: </span>{{country.gdp | number}} USD</p>
+      <p>
+        <span>Currency: </span>{{country.currency}}</p>
+-->
+            </div>
+        </div>
+    </div>
+</div>

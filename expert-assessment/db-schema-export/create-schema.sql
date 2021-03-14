@@ -1,0 +1,1 @@
+CREATE SCHEMA `expert-assessment` DEFAULT CHARACTER SET utf8 ;

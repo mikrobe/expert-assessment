@@ -1,0 +1,25 @@
+<zk xmlns:n="native">
+	<window title="Uploaded Documents" viewModel="@id('vm') @init('ai.expert.assessment.ui.viewmodel.DocumentsVM')">
+		<span class="input-group-btn">
+			<button label="Add documents" iconSclass="z-icon-plus"
+				style="border-top-right-radius:5px;border-bottom-right-radius:5px;" upload="true,maxsize=-1,multiple=true,native"
+				onUpload="@command('doUpload',event=event)" />
+		</span>
+		<separator />
+			<div class="input-group" style="padding-bottom:20px">
+				<span class="input-group-addon">
+					<n:i class="fa fa-book"></n:i>
+				</span>
+				<div children="@load(vm.documents)">
+					<template name="children" var="document">
+					<div>
+						<textbox sclass="form-control" style="display:inline;background-color:inherit !important" placeholder="data file"
+						readonly="true" value="@load(document.name)" instant="true" cols="60" />
+						<button iconSclass="z-icon-eye"  onClick="@command('gotoDocument', doc=document)"/>
+						<button iconSclass="z-icon-trash" onClick="@command('delete', doc=document)"/>
+					</div>
+					</template>
+				</div>
+			</div>
+	</window>
+</zk>
