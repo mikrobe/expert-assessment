@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ai.expert.assessment.facade.FullAnalysis;
-import ai.expert.assessment.mapper.FullAnalysisMapper;
 import ai.expert.assessment.service.AnalyzeSuccess;
 import ai.expert.assessment.service.FullAnalysisService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,19 +23,17 @@ import lombok.extern.slf4j.Slf4j;
 public class FullAnalysisController {
 
 	private final FullAnalysisService service;
-	private final FullAnalysisMapper mapper;
 	
-	public FullAnalysisController (FullAnalysisService service,
-			FullAnalysisMapper mapper){
+	public FullAnalysisController (FullAnalysisService service){
 			this.service = service;
-			this.mapper = mapper;
 	}
 
+
 	/**
-	 * Gets FullAnalysis by document id.
+	 * Gets list of FullAnalysis by document id.
 	 *
-	 * @param documentId the document id
-	 * @return the FullAnalysis by the document
+	 * @param documentUid the document id
+	 * @return the FullAnalysis list
 	 */
 	@CrossOrigin
 	@GetMapping("/fullanalysis/document/{id}")
@@ -45,6 +42,12 @@ public class FullAnalysisController {
 		return ResponseEntity.ok().body(fullAnalysis);
 	}
 	
+	/**
+	 * Starts full analysis of the document
+	 * @param documentUid the document id
+	 * @param redirectAttributes
+	 * @return the document id and the URI to the document full analysis details
+	 */
 	@CrossOrigin
 	@GetMapping("/fullanalysis/document/{id}/process")
 	public ResponseEntity<Long> runFullAnalysisByDocumentId(@PathVariable(value = "id") Long documentUid, RedirectAttributes redirectAttributes){

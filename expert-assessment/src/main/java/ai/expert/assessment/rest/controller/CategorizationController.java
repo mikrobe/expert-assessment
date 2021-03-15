@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ai.expert.assessment.facade.Categorization;
-import ai.expert.assessment.mapper.CategorizationMapper;
 import ai.expert.assessment.service.CategorizationService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,19 +21,16 @@ import lombok.extern.slf4j.Slf4j;
 public class CategorizationController {
 
 	private final CategorizationService service;
-	private final CategorizationMapper mapper;
 	
-	public CategorizationController (CategorizationService service,
-			CategorizationMapper mapper){
+	public CategorizationController (CategorizationService service){
 			this.service = service;
-			this.mapper = mapper;
 	}
 
 	/**
 	 * Gets Categorizations by document id.
 	 *
-	 * @param documentId the document id
-	 * @return the Categorizations by the document
+	 * @param documentUid the document id
+	 * @return the Categorizations
 	 */
 	@CrossOrigin
 	@GetMapping("/categorizations/document/{id}")
@@ -43,6 +39,12 @@ public class CategorizationController {
 		return ResponseEntity.ok().body(categorizations);
 	}
 	
+	/**
+	 * Starts categorization of the document
+	 * @param documentUid the document id
+	 * @param redirectAttributes
+	 * @return the document id and the URI to the document categorization details
+	 */
 	@CrossOrigin
 	@GetMapping("/categorizations/document/{id}/process")
 	public ResponseEntity<Long> runCategorizationByDocumentId(@PathVariable(value = "id") Long documentUid, RedirectAttributes redirectAttributes){

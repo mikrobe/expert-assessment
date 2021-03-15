@@ -21,7 +21,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ai.expert.assessment.command.AddDocument;
 import ai.expert.assessment.command.CreateDocument;
 import ai.expert.assessment.facade.Document;
-import ai.expert.assessment.mapper.DocumentMapper;
 import ai.expert.assessment.service.DocumentService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,14 +30,18 @@ import lombok.extern.slf4j.Slf4j;
 public class DocumentController {
 
 	private final DocumentService service;
-	private final DocumentMapper mapper;
 	
-	public DocumentController (DocumentService service,
-								DocumentMapper mapper){
+	public DocumentController (DocumentService service){
 			this.service = service;
-			this.mapper = mapper;
 	}
 	
+	/**
+	 * Creates a document providing the filename and the file content as a String.
+	 * <p>
+	 * See {@link CreateDocument}
+	 * @param command the document as a filename and a string content
+	 * @return the document id and the URI to the document details
+	 */
 	@CrossOrigin
 	@PostMapping(value = "/documents")
 	ResponseEntity<Long> create(@RequestBody @Valid CreateDocument command) {
@@ -53,6 +56,12 @@ public class DocumentController {
 		}
 	}
 	
+	/**
+	 * Upload a file and creates a new document
+	 * @param file
+	 * @param redirectAttributes
+	 * @return the document id and the URI to the document details
+	 */
 	@CrossOrigin
 	@PostMapping(value = "/documents/upload")
 	ResponseEntity<Long> upload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
@@ -70,6 +79,10 @@ public class DocumentController {
 		}
 	}
 
+	/**
+	 * Gets the list of documents stored in the repository
+	 * @return the list of documents
+	 */
 	@CrossOrigin
 	@GetMapping(value = "/documents", produces = "application/json")
 	public ResponseEntity<List<Document>> getDocuments() {
@@ -86,28 +99,26 @@ public class DocumentController {
 	/**
 	 * Gets document by id.
 	 *
-	 * @param documentId the document id
-	 * @return the documents by id
-	 * @throws ResourceNotFoundException the resource not found exception
+	 * @param documentUid the document id
+	 * @return the document or a NOT_FOUND status
 	 */
 	@CrossOrigin
 	@GetMapping("/documents/{id}")
-	public ResponseEntity<Document> getDocumentById(@PathVariable(value = "id") Long documentId){
-		Document document = service.findDocument(documentId);
+	public ResponseEntity<Document> getDocumentById(@PathVariable(value = "id") Long documentUid){
+		Document document = service.findDocument(documentUid);
 		return document != null ? ResponseEntity.ok().body(document) : ResponseEntity.notFound().build();
 	}
 
 	/**
-	 * Gets documents by id.
+	 * Gets file content by document id.
 	 *
-	 * @param documentId the document id
-	 * @return the documents by id
-	 * @throws ResourceNotFoundException the resource not found exception
+	 * @param documentUid the document id
+	 * @return the file content or a NOT_FOUND status
 	 */
 	@CrossOrigin
 	@GetMapping("/documents/{id}/content")
-	public ResponseEntity<String> getDocumentContentById(@PathVariable(value = "id") Long documentId){
-		byte[] content = service.getDocumentContent(documentId);
+	public ResponseEntity<String> getDocumentContentById(@PathVariable(value = "id") Long documentUid){
+		byte[] content = service.getDocumentContent(documentUid);
 		return content != null ? ResponseEntity.ok().body(new String(content)) : ResponseEntity.notFound().build();
 	}
 
